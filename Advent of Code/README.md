@@ -1,2 +1,0 @@
-# Advent
-Advent of Code
