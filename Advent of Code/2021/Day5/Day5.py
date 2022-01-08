@@ -1,10 +1,8 @@
 import math
 from dataclasses import dataclass
 from fractions import Fraction
-from itertools import combinations, count, repeat
+from itertools import combinations, repeat
 from typing import List, NamedTuple
-
-from num import count_crossings, read_file
 
 
 class Point(NamedTuple):
@@ -107,7 +105,6 @@ class Line:
         """
         # * is the cross product for two Points
         # & is the dot product for two Points
-        # eps = 10e-5
         r = self.end_start_diff
         s = other.end_start_diff
         q = other.start
@@ -149,15 +146,14 @@ class Line:
                 y1_diff_y3 = self.start.y - other.start.y
                 y3_diff_y4 = other.start.y - other.end.y
 
-                t = self.determinant(
+                det = self.determinant(
                     x1_diff_x3, x3_diff_x4, y1_diff_y3, y3_diff_y4
                 ) / self.determinant(x1_diff_x2, x3_diff_x4, y1_diff_y2, y3_diff_y4)
-                x_intersect = self.start.x + t * (self.end.x - self.start.x)
-                y_intersect = self.start.y + t * (self.end.y - self.start.y)
+                x_intersect = self.start.x + det * (self.end.x - self.start.x)
+                y_intersect = self.start.y + det * (self.end.y - self.start.y)
 
                 # Check that diagonal lines intersect at integer coordinates
                 if not (self.straight or other.straight):
-                    # intercepts of the diagonals must both be odd or even
                     sdx, sdy = self.end.x - self.start.x, self.end.y - self.start.y
                     odx, ody = other.end.x - other.start.x, other.end.y - other.start.y
                     sparity = (self.start.y + (sdy // sdx) * self.start.x) % 2
@@ -165,121 +161,10 @@ class Line:
                     if sparity != oparity:
                         return False
 
-                return Point(x_intersect, y_intersect)
+                return Point(round(x_intersect), round(y_intersect))
 
         # print("Line segments are not parallel and do not intersect")
         return False
-
-
-class LineIntersection:
-    def __init__(self, AB: Line, CD: Line) -> None:
-        self.AB = AB
-        self.CD = CD
-
-    @staticmethod
-    def is_counter_clockwise(A: Point, B: Point, C: Point) -> bool:
-        """
-        Given 3 points, determine if they are listed in counter-clockwise order
-
-        If slope of AB is less than slope of AC then the points are counter-clockwise
-        """
-        slope_ab = (C.y - A.y) * (B.x - A.x)
-        slope_ac = (B.y - A.y) * (C.x - A.x)
-
-        return slope_ab > slope_ac
-
-    @staticmethod
-    def determinant(a, b, c, d):
-        """
-        Return the determinant of a 2x2 matrix
-        """
-        return a * d - c * b
-
-    @property
-    def is_intersected(self) -> bool:
-        """
-        Given line segments AB and CD determine if they intersect at a single point
-
-        If AB intersects CD then either ACD or BCD should be in counter-clockwise orientation
-        """
-        A = self.AB.start
-        B = self.AB.end
-        C = self.CD.start
-        D = self.CD.end
-
-        acd_not_bcd = self.is_counter_clockwise(A, C, D) != self.is_counter_clockwise(
-            B, C, D
-        )
-        abc_not_abd = self.is_counter_clockwise(A, B, C) != self.is_counter_clockwise(
-            A, B, D
-        )
-
-        return acd_not_bcd and abc_not_abd
-
-    @property
-    def intersection_point(self) -> Point:
-        """
-        Based on https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line_segment
-        """
-
-        # A: (x1, y1)
-        # B: (x2, y2)
-        # C: (x3, y3)
-        # D: (x4, y4)
-        x1_diff_x2 = self.AB.start.x - self.AB.end.x
-        x1_diff_x3 = self.AB.start.x - self.CD.start.x
-        x3_diff_x4 = self.CD.start.x - self.CD.end.x
-
-        y1_diff_y2 = self.AB.start.y - self.AB.end.y
-        y1_diff_y3 = self.AB.start.y - self.CD.start.y
-        y3_diff_y4 = self.CD.start.y - self.CD.end.y
-
-        t = self.determinant(
-            x1_diff_x3, x3_diff_x4, y1_diff_y3, y3_diff_y4
-        ) / self.determinant(x1_diff_x2, x3_diff_x4, y1_diff_y2, y3_diff_y4)
-        x_intersect = self.AB.start.x + t * (self.AB.end.x - self.AB.start.x)
-        y_intersect = self.AB.start.y + t * (self.AB.end.y - self.AB.start.y)
-
-        # Check that diagonal lines intersect at integer coordinates
-        if not x_intersect.is_integer() or not y_intersect.is_integer():
-            return None
-
-        return Point(x_intersect, y_intersect)
-
-    @property
-    def is_overlap(self) -> bool:
-        """
-        Given line segments AB and CD determine if they are colinear and overlap
-        """
-        cross_start = self.AB * self.CD.start
-        cross_end = self.AB * self.CD.end
-        # Colinear
-        if cross_start == 0 and cross_end == 0:
-            return True
-        else:
-            return False
-
-    @property
-    def overlapping_points(self):
-        return set(self.AB.line_points) & set(self.CD.line_points)
-
-
-sample = [
-    "0,9 -> 5,9",  #
-    "8,0 -> 0,8",
-    "9,4 -> 3,4",  #
-    "2,2 -> 2,1",  #
-    "7,0 -> 7,4",  #
-    "6,4 -> 2,0",
-    "0,9 -> 2,9",  #
-    "3,4 -> 1,4",  #
-    "0,0 -> 8,8",  #
-    "5,5 -> 8,2",  #
-]
-
-
-# AB = "600,773 -> 546,773"
-# CD = "831,773 -> 32,773"
 
 
 def part1_solution(input):
@@ -300,27 +185,6 @@ def part1_solution(input):
     return len(intersected_points)
 
 
-# def part1_solution(input):
-
-#     line_segments = map(Line.from_string, input)
-
-#     intersected_points = set()
-#     for segment_1 in line_segments:
-#         for segment_2 in line_segments:
-#             if segment_1 == segment_2:
-#                 pass
-#             elif segment_1.straight and segment_2.straight:
-#                 overlapping_points = segment_1 & segment_2
-#                 if overlapping_points:
-#                     if isinstance(overlapping_points, Point):
-#                         overlapping_points = set([overlapping_points])
-#                         intersected_points |= overlapping_points
-#                     else:
-#                         intersected_points |= overlapping_points
-
-#     return len(intersected_points)
-
-
 def part2_solution(input):
 
     line_segments = map(Line.from_string, input)
@@ -338,61 +202,24 @@ def part2_solution(input):
     return len(intersected_points)
 
 
-def turn_to_example(arr: List):
-    lines = [line.split(" -> ") for line in arr]
-    return [
-        [(int(s[0]), int(s[1])) for s in (x.split(",") for x in line)] for line in lines
-    ]
+sample = [
+    "0,9 -> 5,9",  #
+    "8,0 -> 0,8",
+    "9,4 -> 3,4",  #
+    "2,2 -> 2,1",  #
+    "7,0 -> 7,4",  #
+    "6,4 -> 2,0",
+    "0,9 -> 2,9",  #
+    "3,4 -> 1,4",  #
+    "0,0 -> 8,8",  #
+    "5,5 -> 8,2",  #
+]
 
-
-print(part1_solution(sample))
+assert part1_solution(sample) == 5
+assert part2_solution(sample) == 12
 
 if __name__ == "__main__":
-    AB = "591,357 -> 30,918"
-    CD = "25,923 -> 904,44"
-
-    # sample = [AB, CD]
-    # temp_vals = turn_to_example(sample)
-    # print("Example function:")
-    # print(count_crossings(temp_vals, allow_diagonal=True))
-
-    # LINE_AB = Line.from_string(CD)  # (0,9), (1,9), (2,9), (3,9), (4,9), (5,9)
-    # LINE_CD = Line.from_string(AB)  # (0,9), (1,9), (2,9)
-    # print("My function")
-    # if LINE_AB & LINE_CD:
-    #     print(len(LINE_AB & LINE_CD))
     with open("Advent of Code/2021/Day5/input.txt", "r") as f:
         my_list = [line.rstrip() for line in f]
-    #     # print(part1_solution(my_list))
-    #     # print(part2_solution(my_list))
-    sample_counter = int()
-    my_counter = int()
-    for seg1, seg2 in combinations(my_list, 2):
-        sample = [seg1, seg2]
-        temp_vals = turn_to_example(sample)
-        sample_counts = count_crossings(temp_vals, allow_diagonal=True)
-        my_counts = part2_solution(sample)
-        sample_counter += sample_counts
-        my_counter += my_counts
-        if sample_counts != my_counts:
-            print(f"Do not align:\n{sample}")
-            break
-    print(f"{sample_counter=}")
-    print(f"{my_counter=}")
-
-# Answer: 7318
-# sol = part1_solution(my_list)
-
-# # print(part1_solution(my_list))
-
-# # Guesses: 14955, 14954, 16360
-# # Answer: 19939
-# print(part2_solution(my_list))
-
-# text_chunk_size = 29
-
-# for idx in range(len(s) // text_chunk_size):
-#     # 15 .. 0,1,2,3
-#     first_idx = idx * text_chunk_size
-#     second_idx = first_idx + text_chunk_size
-#     print(s[first_idx:second_idx])
+        print(f"Part 1: {part1_solution(my_list)}")
+        print(f"Part 2: {part2_solution(my_list)}")
