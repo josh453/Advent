@@ -1,19 +1,7 @@
-
 from typing import Tuple
 
 
-sample = [
-    "forward 5",
-    "down 5",
-    "forward 8",
-    "up 3",
-    "down 8",
-    "forward 2",
-    ]
-
-
-
-def find_x_y_position(iterable:list) -> Tuple[int, int]:
+def find_x_y_position(iterable: list) -> Tuple[int, int]:
     """
     Given a list of directions, return the depth and horizontal position
     """
@@ -26,10 +14,11 @@ def find_x_y_position(iterable:list) -> Tuple[int, int]:
             y -= int(direction[-1])
         if "down" in direction:
             y += int(direction[-1])
-    
-    return x,y
 
-def find_x_y_position_with_aim(iterable:list) -> Tuple[int, int]:
+    return x, y
+
+
+def find_x_y_position_with_aim(iterable: list) -> Tuple[int, int]:
     """
     Given a list of directions, return the depth and horizontal position using aim
     """
@@ -39,13 +28,13 @@ def find_x_y_position_with_aim(iterable:list) -> Tuple[int, int]:
     for direction in iterable:
         if "forward" in direction:
             x += int(direction[-1])
-            y += (int(direction[-1]) * aim)
+            y += int(direction[-1]) * aim
         if "up" in direction:
             aim -= int(direction[-1])
         if "down" in direction:
             aim += int(direction[-1])
-    
-    return x,y
+
+    return x, y
 
 
 if __name__ == "__main__":
@@ -53,9 +42,9 @@ if __name__ == "__main__":
         my_list = [line.rstrip() for line in f]
 
         # Part 1
-        x,y = find_x_y_position(my_list)
+        x, y = find_x_y_position(my_list)
         print(f"Part 1: {x*y}")
 
         # Part 2
-        x,y = find_x_y_position_with_aim(my_list)
+        x, y = find_x_y_position_with_aim(my_list)
         print(f"Part 2: {x*y}")
