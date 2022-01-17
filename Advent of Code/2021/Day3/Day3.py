@@ -58,7 +58,7 @@ def find_carbon_rating(array_of_binaries: np.array, position: int = 0) -> None:
 
 
 if __name__ == "__main__":
-    with open("Day3/input.txt", "r") as f:
+    with open("Advent of Code/2021/Day3/input.txt", "r") as f:
         my_list = [line.rstrip() for line in f]
         my_array = np.array(my_list)
 

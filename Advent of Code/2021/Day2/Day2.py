@@ -38,7 +38,7 @@ def find_x_y_position_with_aim(iterable: list) -> Tuple[int, int]:
 
 
 if __name__ == "__main__":
-    with open("Day2/input.txt", "r") as f:
+    with open("Advent of Code/2021/Day2/input.txt", "r") as f:
         my_list = [line.rstrip() for line in f]
 
         # Part 1
