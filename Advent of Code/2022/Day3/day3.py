@@ -1,4 +1,3 @@
-import itertools
 import string
 
 scores = range(1, 53)
@@ -6,23 +5,26 @@ alphabet = string.ascii_letters
 scoring_dict = dict(zip(alphabet, scores))
 
 sample = [
-    'vJrwpWtwJgWrhcsFMMfFFhFp',
-    'jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL',
-    'PmmdzqPrVvPwwTWBwg',
-    'wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn',
-    'ttgJtRGJQctTZtZT',
-    'CrZsJsPPZsGzwwsLwLmpwMDw',
-    ]
+    "vJrwpWtwJgWrhcsFMMfFFhFp",
+    "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL",
+    "PmmdzqPrVvPwwTWBwg",
+    "wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn",
+    "ttgJtRGJQctTZtZT",
+    "CrZsJsPPZsGzwwsLwLmpwMDw",
+]
+
 
 def split_strings(s):
-    first_half  = s[:len(s)//2]
-    second_half = s[len(s)//2:]
+    first_half = s[: len(s) // 2]
+    second_half = s[len(s) // 2 :]
     return first_half, second_half
+
 
 def batch(iterable, n=2):
     l = len(iterable)
     for ndx in range(0, l, n):
-        yield iterable[ndx:min(ndx + n, l)]
+        yield iterable[ndx : min(ndx + n, l)]
+
 
 def part_one(my_list):
     score = 0
@@ -32,6 +34,7 @@ def part_one(my_list):
         unsetted_answer = next(iter(intersection))
         score += scoring_dict.get(unsetted_answer, 0)
     return score
+
 
 def part_two(my_list):
     score = 0
@@ -43,9 +46,11 @@ def part_two(my_list):
     return score
 
 
-
 if __name__ == "__main__":
-    with open("C:/Users/joshu/OneDrive/Desktop/Advent of Code 2022/Day3/input.txt", "r") as f:
+    with open(
+        "C:/Users/joshu/OneDrive/Desktop/Github/Advent/Advent of Code/2022/Day3/input.txt",
+        "r",
+    ) as f:
         my_list = [line.rstrip() for line in f]
         # part 1
         print(part_one(my_list))

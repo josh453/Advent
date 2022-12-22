@@ -1,13 +1,12 @@
-import math
-
 sample = [
-    "2-4,6-8", # False
-    "2-3,4-5", # False
-    "5-7,7-9", # True
-    "2-8,3-7", # True
-    "6-6,4-6", # True
-    "2-6,4-8", # True
+    "2-4,6-8",  # False
+    "2-3,4-5",  # False
+    "5-7,7-9",  # True
+    "2-8,3-7",  # True
+    "6-6,4-6",  # True
+    "2-6,4-8",  # True
 ]
+
 
 def part_one(my_list):
     score = 0
@@ -21,8 +20,9 @@ def part_one(my_list):
         if delta_one_three <= 0 and delta_two_four >= 0:
             score += 1
         elif delta_one_three >= 0 and delta_two_four <= 0:
-            score += 1   
+            score += 1
     return score
+
 
 def part_two(my_list):
     score = 0
@@ -40,8 +40,12 @@ def part_two(my_list):
 
     return score
 
+
 if __name__ == "__main__":
-    with open("C:/Users/joshu/OneDrive/Desktop/Advent of Code 2022/Day4/input.txt", "r") as f:
+    with open(
+        "C:/Users/joshu/OneDrive/Desktop/Github/Advent/Advent of Code/2022/Day4/input.txt",
+        "r",
+    ) as f:
         my_list = [line.rstrip() for line in f]
         # part 1
         print(part_one(my_list))

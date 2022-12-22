@@ -106,7 +106,7 @@ def monkey_shenanigans(list_of_monkeys, relief=3, rounds=20):
         
 
 if __name__ == "__main__":
-    with open("C:/Users/joshu/OneDrive/Desktop/Advent of Code 2022/Day11/input.txt", "r") as f:
+    with open("C:/Users/joshu/OneDrive/Desktop/Github/Advent/Advent of Code/2022/Day11/input.txt", "r") as f:
         ...
         my_list = f.read().split("\n\n")
         # print(my_list[:10])
