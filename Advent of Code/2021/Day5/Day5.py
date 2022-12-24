@@ -69,7 +69,7 @@ class Line:
             x_range = repeat(start_x)
         elif sdx < 0:
             x_range = range(
-                start_x, start_x - abs(slope.denominator), slope.denominator
+                start_x, end_x - abs(slope.denominator), slope.denominator
             )
         else:
             x_range = range(
@@ -219,7 +219,7 @@ assert part1_solution(sample) == 5
 assert part2_solution(sample) == 12
 
 if __name__ == "__main__":
-    with open("Advent of Code/2021/Day5/input.txt", "r") as f:
+    with open("C:/Users/joshu/OneDrive/Desktop/Github/Advent/Advent of Code/2021/Day5/input.txt", "r") as f:
         my_list = [line.rstrip() for line in f]
         print(f"Part 1: {part1_solution(my_list)}")
         print(f"Part 2: {part2_solution(my_list)}")
