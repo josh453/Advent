@@ -68,7 +68,7 @@ class Direction(Enum):
 @dataclass
 class CaveSystem:
     rocks: set[Position]
-    sand_path: List[Position] = field(default_factory=lambda: [Position(500,0)])
+    sand_path: List[Position] = field(default_factory=lambda: [Position(500, 0)])
 
     @classmethod
     def from_text(cls, data: list[str]) -> Self:
@@ -89,7 +89,7 @@ class CaveSystem:
         return max(pos.y for pos in self.rocks)
 
     def find_single_grain_resting_position(
-        self, occupied: set[Position], floor: int, position: Position = Position(500,0)
+        self, occupied: set[Position], floor: int, position: Position = Position(500, 0)
     ):
         """Find the resting position of a single grain of sand given the occupied spaces"""
         while True:
@@ -112,9 +112,9 @@ class CaveSystem:
 
     def full_simulation(self, occupied=None, floor=None, has_floor=False):
         """Simulate all grains of sand
-        
+
         Algorithm steps:
-        
+
             1. Take the grain of sand and find it's resting position while saving all the positions it traversed on it's way down
                 - Check to see if the grain is in free fall
                     - If has_floor is False then stop the simulation and return the difference between the starting number of rocks
@@ -122,43 +122,48 @@ class CaveSystem:
                     - If has_floor is true, add a rock in it's path and continue
             2. Add the final resting position to the set of occuppied positions
             3. Take the last element of the traversal path and use that as the starting position for the next grain
-            4. 
-        
+            4.
+
         """
         if occupied is None:
             occupied = set(self.rocks)
-        
+
         if floor is None:
             floor = self.floor
-        
-        resting_pos = self.find_single_grain_resting_position(occupied=occupied, floor=floor)
-        
+
+        resting_pos = self.find_single_grain_resting_position(
+            occupied=occupied, floor=floor
+        )
+
         if not has_floor:
             while True:
                 if resting_pos is None:
                     break
                 occupied.add(resting_pos)
                 next_sand = self.sand_path.pop()
-                resting_pos = self.find_single_grain_resting_position(occupied=occupied, floor=floor, position=next_sand)
-        
+                resting_pos = self.find_single_grain_resting_position(
+                    occupied=occupied, floor=floor, position=next_sand
+                )
+
         if has_floor:
             while True:
-                
+
                 if not self.sand_path:
                     return len(occupied) - len(self.rocks)
-                
+
                 # Sand is free falling, so we add a rock to in it's way
                 if resting_pos is None:
                     self.rocks.add(self.sand_path.pop())
                     occupied = set(self.rocks)
                 else:
                     occupied.add(resting_pos)
-                
-                next_sand = self.sand_path.pop()
-                resting_pos = self.find_single_grain_resting_position(occupied=occupied, floor=floor+2, position=next_sand)
-        
-        return len(occupied) - len(self.rocks)
 
+                next_sand = self.sand_path.pop()
+                resting_pos = self.find_single_grain_resting_position(
+                    occupied=occupied, floor=floor + 2, position=next_sand
+                )
+
+        return len(occupied) - len(self.rocks)
 
 
 test = CaveSystem.from_text(sample)
@@ -179,4 +184,3 @@ if __name__ == "__main__":
 
         # # part 2
         print("Part 2:", cave.full_simulation(has_floor=True))
-

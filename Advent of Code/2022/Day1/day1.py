@@ -11,7 +11,6 @@ def find_top_n_calories(calorie_list, n=1):
     return sum(sorted(cal_list, reverse=True)[:n])
 
 
-
 if __name__ == "__main__":
     with open(
         "C:/Users/joshu/OneDrive/Desktop/Github/Advent/Advent of Code/2022/Day1/input.txt",
